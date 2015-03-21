@@ -1,1 +1,0 @@
-The GCC version of the STM32F10x
