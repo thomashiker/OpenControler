@@ -1,0 +1,12 @@
+---- rt_get_PSP Matches (2 in 2 files) ----
+rt_HAL_CM.h (\...\src):257
+extern U32  rt_get_PSP (void);
+extern void os_set_env (void);
+extern void *_alloc_box (void *box_mem);
+rt_Task.c (\...\src):263
+    os_tsk.run->tsk_stack = rt_get_PSP ();
+    rt_stk_check ();
+    p_MCB = os_tsk.run->p_mlnk;
+---- rt_get_PSP Search Errors Encountered (1) ----
+The following 1 files could not be processed:
+\\192.168.3.9\home\hiker\Developer\cmsis_rtos\obj\stm32.asm : File could not be opened.
