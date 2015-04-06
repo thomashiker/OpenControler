@@ -9,6 +9,7 @@ DEVICE_DIR   = startup/STM32F10x
 STARTUP_DIR  = $(DEVICE_DIR)
 RTX_SRC_DIR  = lib/rtx/SRC
 RTX_INC_DIR  = lib/rtx/INC $(RTX_DIR_SRC)
+DRIVER_DIR   = drivers
 
 
 LD_FILE  = ld/STM32F103CB.ld
@@ -19,7 +20,7 @@ PROJ_BIN = $(OBJ_ROOT_DIR)/$(PROJ_NAME).bin
 PROJ_MAP = $(OBJ_ROOT_DIR)/$(PROJ_NAME).map
 PROJ_ASM = $(OBJ_ROOT_DIR)/$(PROJ_NAME).asm
 
-DEFFLAG = -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER -D__CORTEX_M3 -D__CMSIS_RTOS
+DEFFLAG = -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER -D__CORTEX_M3 -D__CMSIS_RTOS -D__MICROLIB
 #DEFFLAG = -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER -D__MICROLIB
 COMPILE_OPTS = -fdiagnostics-color=auto -mcpu=cortex-m3 -mthumb -Wall -g -O3  -ffunction-sections $(DEFFLAG)
 INCLUDE_DIRS = -I . -I $(STM32LIB_DIR)/inc -I include -I $(CM3CORE_DIR) -I $(DEVICE_DIR) -I $(RTX_INC_DIR)
@@ -79,10 +80,13 @@ STM32LIB_SRCS = \
 USER_SRCS = \
     $(DEVICE_DIR)/system_stm32f10x.c      \
     $(STARTUP_DIR)/startup_stm32f10x_md.s \
-    $(CM3CORE_DIR)/RTX_Conf_CM.c                     \
+    $(CM3CORE_DIR)/RTX_Conf_CM.c          \
     main/main.c                           \
+    $(DRIVER_DIR)/usart/usart.c           \
+    $(DRIVER_DIR)/servo/servo.c           \
+    $(DRIVER_DIR)/timer/timer.c           \
+    $(DRIVER_DIR)/printf/printf.c          \
 #    main/stm32f10x_it.c
-#    $(CM3CORE_DIR)/core_cm3.c             
 
 
 RTXLIB_OBJS   = $(addprefix $(OBJ_ROOT_DIR)/,$(subst .c,.o,$(subst .s,.o,$(RTXLIB_SRCS))))

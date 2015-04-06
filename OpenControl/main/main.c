@@ -22,7 +22,12 @@
 //#include "stm32f10x_nvic.h"
 //#include "stm32f10x_nvic.h"
 #include "stm32f10x_conf.h"
+#include "misc.h"
 #include "cmsis_os.h"
+#include "usart.h"
+#include "servo.h"
+#include "printf.h"
+
 
 
 
@@ -40,19 +45,35 @@ void Delay(vu32 nCount);
 /* Private functions ---------------------------------------------------------*/
 osThreadId led_off_id;
 
+void mDelay(void)
+{
+	unsigned int i = 0;
+	for (i = 0; i < 30; i++) {
+		Delay(0xAFFFF);
+	}
+}
 
 void led_off (void const *argument) {
-  for (;;) {
-	/* Turn off led connected to PC.4 pin */
-	//GPIO_SetBits(GPIOC, GPIO_Pin_4);
-	GPIO_SetBits(GPIOB, GPIO_Pin_3);
-	/* Insert delay */
-	Delay(0xAFFFF);
-  }
+	for (;;) {
+		/* Turn off led connected to PB3 pin */
+		GPIO_SetBits(GPIOB, GPIO_Pin_3);
+
+		printk("LED OFF!\n");
+
+		/* Insert delay */
+		mDelay();
+		//osDelay(100);
+
+		osThreadYield();
+	}
 }
 
 osThreadDef(led_off, osPriorityNormal, 1, 0);
 
+int uart_send(int ch)
+{
+  return com_send_char(COM5, ch);
+}
 
 /*******************************************************************************
 * Function Name  : main
@@ -78,22 +99,28 @@ int main(void)
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
+	
+	/*----------------------------------------*/
+	com_init(COM5, BAUD115200);
+
+	printk("%s %s\n", __DATE__, __TIME__);
+
+	//PIOS_Servo_Init();
+
 	led_off_id = osThreadCreate(osThread(led_off), NULL);
 	
-	while (1)
-	{
-		/* Turn off led connected to PC.4 pin */
-		//GPIO_SetBits(GPIOC, GPIO_Pin_4);
-		//GPIO_SetBits(GPIOB, GPIO_Pin_3);
-		/* Insert delay */
-		Delay(0xAFFFF);
-
-		/* Turn on led connected to PC.4 pin */
-		//GPIO_ResetBits(GPIOC, GPIO_Pin_4);
+	for (;;) {
+		/* Turn on led connected to PB3 pin */
 		GPIO_ResetBits(GPIOB, GPIO_Pin_3);
+
+		printk("LED ON!\n");
+
 		/* Insert delay */
-		Delay(0xAFFFF);
-  }
+		mDelay();
+		//osDelay(100);
+
+		osThreadYield();
+	}
 }
 
 /*******************************************************************************
@@ -150,6 +177,15 @@ void RCC_Configuration(void)
 		{
 		}
 	}
+
+	/* Enable GPIOB clock */
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOE, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOF, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
 }
 
 /*******************************************************************************

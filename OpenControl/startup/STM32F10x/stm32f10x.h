@@ -483,6 +483,10 @@ typedef enum IRQn
   * @{
   */  
 
+#ifndef NULL
+#define NULL ((void *)0)
+#endif
+
 /*!< STM32F10x Standard Peripheral Library old types (maintained for legacy purpose) */
 typedef int32_t  s32;
 typedef int16_t s16;
@@ -515,6 +519,13 @@ typedef __IO uint8_t  vu8;
 typedef __I uint32_t vuc32;  /*!< Read Only */
 typedef __I uint16_t vuc16;  /*!< Read Only */
 typedef __I uint8_t vuc8;   /*!< Read Only */
+
+#ifndef __cplusplus
+typedef enum {false = 0, true = !false} bool;
+#define TRUE	true
+#define FALSE	false
+#endif
+
 
 typedef enum {RESET = 0, SET = !RESET} FlagStatus, ITStatus;
 
